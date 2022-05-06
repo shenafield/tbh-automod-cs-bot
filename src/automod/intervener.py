@@ -1,7 +1,7 @@
 import math
 from dataclasses import dataclass
 
-from complete import Completer
+from .complete import Completer
 
 
 @dataclass
@@ -24,7 +24,7 @@ class Chat:
 
 
 class Intervener:
-    def __init__(self, completer, chat=None, questions=None):
+    def __init__(self, completer: Completer, chat=None, questions=None):
         self.completer = completer
         if chat is None:
             self.chat = Chat()

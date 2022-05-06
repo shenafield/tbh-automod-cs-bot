@@ -2,15 +2,15 @@ import os
 
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-from complete import Completer
-from moderator import ModerationHandler
-from slow_chat_packager import PackagerCog
+from .complete import Completer
+from .moderator import ModerationHandler
+from .slow_chat_packager import PackagerCog
 
 
 def main():
-    load_dotenv()
+    load_dotenv(find_dotenv(usecwd=True))
 
     embed = discord.Embed(
         color=0x3B4252,

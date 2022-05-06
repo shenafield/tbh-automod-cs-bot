@@ -1,15 +1,14 @@
 import discord
 from discord.ext import commands
 
-from complete import Completer
-from intervener import Chat
-from intervener import Intervener
-from slow_chat_packager import Handler
-from slow_chat_packager import PackagerCog
+from .complete import Completer
+from .intervener import Chat
+from .intervener import Intervener
+from .slow_chat_packager import Handler
 
 
 class ModerationHandler(Handler):
-    def __init__(self, completer, embed, treshold=0.5, questions=None):
+    def __init__(self, completer: Completer, embed, treshold=0.5, questions=None):
         self.completer = completer
         self.questions = questions
         self.treshold = treshold
