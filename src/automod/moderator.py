@@ -1,3 +1,5 @@
+import time
+
 import discord
 from discord.ext import commands
 
@@ -13,8 +15,13 @@ class ModerationHandler(Handler):
         self.questions = questions
         self.treshold = treshold
         self.embed = embed
+        self.cooldown = 60 * 15
+        self.last_activated = {}
 
     async def handle(self, release, trigger):
+        if time.time() - self.last_activated.get(trigger.channel.id, 0) < self.cooldown:
+            # So that it doesn't react twice to the same message
+            print("We're on cooldown")
         chat = Chat()
         for message in release:
             chat.send(message.author.display_name, message.content)
@@ -23,6 +30,7 @@ class ModerationHandler(Handler):
         print(needed)
         if needed > self.treshold:
             await self.respond(trigger.channel)
+            self.last_activated[trigger.channel.id] = time.time()
 
     async def respond(self, channel):
         await channel.send(embed=self.embed)
