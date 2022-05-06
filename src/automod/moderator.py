@@ -22,6 +22,7 @@ class ModerationHandler(Handler):
         if time.time() - self.last_activated.get(trigger.channel.id, 0) < self.cooldown:
             # So that it doesn't react twice to the same message
             print("We're on cooldown")
+            return
         chat = Chat()
         for message in release:
             chat.send(message.author.display_name, message.content)
