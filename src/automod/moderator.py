@@ -19,7 +19,10 @@ class ModerationHandler(Handler):
         self.last_activated = {}
 
     async def handle(self, release, trigger):
-        if time.time() - self.last_activated.get(trigger.channel.id, 0) < self.cooldown:
+        last_use = self.last_activated.get(trigger.channel.id)
+        if last_use is None:
+            last_use = self.last_activated[trigger.channel.id] = time.time()
+        if time.time() - last_use < self.cooldown:
             # So that it doesn't react twice to the same message
             print("We're on cooldown")
             return
