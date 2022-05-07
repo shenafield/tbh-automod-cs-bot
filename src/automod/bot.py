@@ -1,8 +1,10 @@
+import json
 import os
 
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv, find_dotenv
+from dotenv import find_dotenv
+from dotenv import load_dotenv
 
 from .complete import Completer
 from .moderator import ModerationHandler
@@ -27,7 +29,9 @@ def main():
         treshold=float(os.getenv("TRESHOLD", 0.5)),
         questions=os.getenv("EMBED_QUESTION"),
     )
-    bot.add_cog(PackagerCog(bot, handler))
+    bot.add_cog(
+        PackagerCog(bot, handler, keywords=tuple(json.loads(os.getenv("KEYWORDS", "[]"))))
+    )
     bot.run(os.getenv("DISCORD_TOKEN"))
 
 
