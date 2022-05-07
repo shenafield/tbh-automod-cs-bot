@@ -30,7 +30,7 @@ def main():
         questions=os.getenv("EMBED_QUESTION"),
     )
     bot.add_cog(
-        PackagerCog(bot, handler, keywords=tuple(json.loads(os.getenv("KEYWORDS", "[]"))))
+        PackagerCog(bot, handler, keywords=tuple(os.getenv("KEYWORDS", "").split(", ")))
     )
     bot.run(os.getenv("DISCORD_TOKEN"))
 

@@ -39,9 +39,16 @@ class Package:
         # Make sure there's enough to analyze
         if (last_message_date - messages[0].created_at).total_seconds() < self.min_wait:
             return
+        # Hotword detection
         frequency = (
             self.keyword_frequency
-            if any(keyword in messages[-1].content for keyword in self.keywords)
+            if any(
+                any(
+                    keyword.lower() in message.content.lower()
+                    for keyword in self.keywords
+                )
+                for message in messages[-5:]
+            )
             else self.frequency
         )
         # Make sure we aren't analyzing too frequently
