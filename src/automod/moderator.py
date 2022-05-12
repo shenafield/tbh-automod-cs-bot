@@ -1,4 +1,5 @@
 import time
+from dataclasses import dataclass
 
 import discord
 from discord.ext import commands
@@ -9,14 +10,21 @@ from .intervener import Intervener
 from .slow_chat_packager import Handler
 
 
+@dataclass
+class Trigger:
+    needed: float
+    time: float
+
+
 class ModerationHandler(Handler):
-    def __init__(self, completer: Completer, embed, treshold=0.5, questions=None):
+    def __init__(self, completer: Completer, embed: discord.Embed, treshold=0.5, questions=None):
         self.completer = completer
         self.questions = questions
         self.treshold = treshold
         self.embed = embed
         self.cooldown = 60 * 15
         self.last_activated = {}
+        self.results: dict[int, Trigger] = {}
 
     async def handle(self, release, trigger):
         last_use = self.last_activated.get(trigger.channel.id)
@@ -32,6 +40,7 @@ class ModerationHandler(Handler):
         intervener = Intervener(self.completer, chat=chat, questions=self.questions)
         needed = intervener.needed
         print(needed)
+        self.results[trigger.channel.id] = Trigger(needed=needed, time=time.time())
         if needed > self.treshold:
             await self.respond(trigger.channel)
             self.last_activated[trigger.channel.id] = time.time()

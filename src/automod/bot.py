@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from .complete import Completer
 from .moderator import ModerationHandler
 from .slow_chat_packager import PackagerCog
+from .utils import UtilsCog
 
 
 def main():
@@ -32,6 +33,7 @@ def main():
     bot.add_cog(
         PackagerCog(bot, handler, keywords=tuple(os.getenv("KEYWORDS", "").split(", ")))
     )
+    bot.add_cog(UtilsCog(bot, handler))
     bot.run(os.getenv("DISCORD_TOKEN"))
 
 
