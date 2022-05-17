@@ -26,6 +26,6 @@ class UtilsCog(commands.Cog):
         delta = humanize.naturaldelta(delta_seconds)
         embed = discord.Embed(
             title="Evaluation",
-            description=f"Last evaluation: {evaluation.needed*100}% ({delta} ago)",
+            description=f"Last evaluation: {round(evaluation.needed*100, 2)}% ({delta} ago)",
         )
         await context.respond(embed=embed, ephemeral=True)
