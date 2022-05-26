@@ -24,7 +24,7 @@ class Chat:
 
 
 class Intervener:
-    def __init__(self, completer: Completer, chat=None, questions=None):
+    def __init__(self, completer: Completer, chat=None, questions=None, prompt_head=""):
         self.completer = completer
         if chat is None:
             self.chat = Chat()
@@ -35,11 +35,12 @@ class Intervener:
         if isinstance(questions, str):
             questions = [questions + "Yes", questions + "No"]
         self.questions = questions
+        self.prompt_head = prompt_head
 
     @property
     def needed(self):
         chat_repr = str(self.chat)
-        prompts = [chat_repr + question for question in self.questions]
+        prompts = [self.prompt_head[max(0, len(chat_repr)-2048*5+len(self.prompt_head)):] + chat_repr + question for question in self.questions]
         log_probabilities = [self.completer.last_logprob(prompt) for prompt in prompts]
         probabilities = [math.e ** prob for prob in log_probabilities]
         normalized_probabilities = [prob / sum(probabilities) for prob in probabilities]

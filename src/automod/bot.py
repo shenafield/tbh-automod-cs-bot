@@ -15,6 +15,12 @@ from .utils import UtilsCog
 def main():
     load_dotenv(find_dotenv(usecwd=True))
 
+    head_path = os.getenv("PRPOMPT_HEAD")
+    if head_path is None:
+        head = ""
+    else:
+        head = open(head_path).read()
+
     embed = discord.Embed(
         color=0x3B4252,
         title=os.getenv("EMBED_TITLE"),
@@ -22,13 +28,14 @@ def main():
     )
     embed.set_footer(text=os.getenv("EMBED_FOOTER"))
 
-    bot = commands.Bot("!")
+    bot = commands.Bot("!", intents=discord.Intents.all())
     completer = Completer(os.getenv("AI21_TOKEN"), "j1-jumbo")
     handler = ModerationHandler(
         completer,
         embed,
         treshold=float(os.getenv("TRESHOLD", 0.5)),
         questions=os.getenv("EMBED_QUESTION"),
+        prompt_head=head,
     )
     bot.add_cog(
         PackagerCog(bot, handler, keywords=tuple(os.getenv("KEYWORDS", "").split(", ")))
