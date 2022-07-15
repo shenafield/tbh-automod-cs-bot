@@ -10,6 +10,7 @@ from .complete import Completer
 from .moderator import ModerationHandler
 from .slow_chat_packager import PackagerCog
 from .utils import UtilsCog
+from .config import JsonConfigReader, Config
 
 
 def main():
@@ -22,18 +23,24 @@ def main():
     )
     embed.set_footer(text=os.getenv("EMBED_FOOTER"))
 
+    config_reader = JsonConfigReader(os.getenv("CONFIG_PATH", "config.json"))
+    config = config_reader.read_config()
+
     bot = commands.Bot("!")
     completer = Completer(os.getenv("AI21_TOKEN"), "j1-jumbo")
     handler = ModerationHandler(
         completer,
         embed,
+        config,
+        config_reader,
         treshold=float(os.getenv("TRESHOLD", 0.5)),
         questions=os.getenv("EMBED_QUESTION"),
+        mod_channel=os.getenv("MOD_CHANNEL"),
     )
     bot.add_cog(
         PackagerCog(bot, handler, keywords=tuple(os.getenv("KEYWORDS", "").split(", ")))
     )
-    bot.add_cog(UtilsCog(bot, handler))
+    bot.add_cog(UtilsCog(bot, handler, config, config_reader))
     bot.run(os.getenv("DISCORD_TOKEN"))
 
 

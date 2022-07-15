@@ -10,12 +10,12 @@ from discord.ext import commands
 
 class Handler(ABC):
     @abstractmethod
-    async def handle(self, release, message):
+    async def handle(self, release, message, bot=None):
         pass
 
 
 class PingHandler(Handler):
-    async def handle(self, release, message):
+    async def handle(self, release, message, bot=None):
         await message.channel.send("handled")
 
 
@@ -75,4 +75,4 @@ class PackagerCog(commands.Cog):
             release = await package.release(message.channel)
             self.packages[message.channel.id] = package
             if release is not None:
-                await self.handler.handle(release, message)
+                await self.handler.handle(release, message, self.bot)
