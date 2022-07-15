@@ -60,12 +60,12 @@ class ModerationHandler(Handler):
             chat.send(message.author.display_name, message.content)
         intervener = Intervener(self.completer, chat=chat, questions=self.questions, prompt_head=self.prompt_head)
         needed = intervener.needed
-        print(f"[moderator] {trigger.chanel.name} {needed}", flush=True)
+        print(f"[moderator] {trigger.channel.name} {needed}", flush=True)
         self.results[trigger.channel.id] = Trigger(needed=needed, time=time.time())
         if needed > self.treshold:
             await self.respond(trigger.channel)
             self.last_activated[trigger.channel.id] = time.time()
-            print(f"[moderator] {trigger.chanel.name} triggered", flush=True)
+            print(f"[moderator] {trigger.channel.name} triggered", flush=True)
         if self.mod_channel is not None:
             if bot:
                 for moderator, treshold in self.mod_tresholds.items():
