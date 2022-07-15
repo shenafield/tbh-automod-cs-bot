@@ -46,6 +46,7 @@ class ModerationHandler(Handler):
         self.config_reader = config_reader
         self.mod_tresholds = config.moderators
         self.mod_channel = mod_channel
+        self.last_mod_pings = {}
 
     async def handle(self, release, trigger, bot=None):
         last_use = self.last_activated.get(trigger.channel.id)
@@ -70,9 +71,13 @@ class ModerationHandler(Handler):
             if bot:
                 for moderator, treshold in self.mod_tresholds.items():
                     if needed > treshold:
-                        channel = await bot.fetch_channel(self.mod_channel)
-                        await channel.send(f"{moderator} needs to intervene on {trigger.channel.mention} ({needed*100:.2f}%)", view=UnsubscribeView(self.config, self.config_reader))
-                        print(f"[moderator] {moderator} pinged for {trigger.channel.name}", flush=True)
+                        if time.time() - self.last_mod_pings.get(moderator, 0) > self.cooldown:
+                            self.last_mod_pings[moderator] = time.time()
+                            channel = await bot.fetch_channel(self.mod_channel)
+                            await channel.send(f"{moderator} needs to intervene on {trigger.channel.mention} ({needed*100:.2f}%)", view=UnsubscribeView(self.config, self.config_reader))
+                            print(f"[moderator] {moderator} pinged for {trigger.channel.name}", flush=True)
+                        else:
+                            print(f"[moderator] {moderator} already pinged for {trigger.channel.name}", flush=True)
 
     async def respond(self, channel):
         await channel.send(embed=self.embed)
