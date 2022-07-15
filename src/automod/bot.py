@@ -40,7 +40,7 @@ def main():
     bot.add_cog(
         PackagerCog(bot, handler, keywords=tuple(os.getenv("KEYWORDS", "").split(", ")))
     )
-    bot.add_cog(UtilsCog(bot, handler, config, config_reader))
+    bot.add_cog(UtilsCog(bot, handler, config, config_reader, os.getenv("MOD_ANNOUNCEMENT_CHANNEL")))
     bot.run(os.getenv("DISCORD_TOKEN"))
 
 

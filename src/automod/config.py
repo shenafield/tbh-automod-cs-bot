@@ -6,7 +6,6 @@ import json
 
 @dataclass
 class Config:
-    mod_announcement_channel: int
     moderators: dict[str, float] = field(default_factory=dict)
     mod_message: Optional[int] = None
 

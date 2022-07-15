@@ -52,7 +52,7 @@ class ModerationHandler(Handler):
             last_use = self.last_activated[trigger.channel.id] = time.time()
         if time.time() - last_use < self.cooldown:
             # So that it doesn't react twice to the same message
-            print("[automod] We're on cooldown")
+            print(f"[automod] {trigger.channel.name} is on cooldown")
             return
         chat = Chat()
         for message in release:
