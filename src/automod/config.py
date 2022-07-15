@@ -29,6 +29,9 @@ class JsonConfigReader(ConfigReader):
             json.dump(asdict(config), f, indent=4)
 
     def read_config(self) -> Config:
-        with open(self.path) as f:
-            return Config(**json.load(f))
+        try:
+            with open(self.path) as f:
+                return Config(**json.load(f))
+        except FileNotFoundError:
+            return Config()
 
