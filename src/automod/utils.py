@@ -28,7 +28,7 @@ class SetSensitivityModal(discord.ui.Modal):
         self.__config.moderators[f"<@{interaction.user.id}>"] = result
         self.__config_reader.write_config(self.__config)
         await interaction.response.send_message(f"Sensitivity threshold set to {result} (previously {original})", ephemeral=True)
-        print(f"[moderator] {interaction.user} set sensitivity threshold to {result}")
+        print(f"[moderator] {interaction.user} set sensitivity threshold to {result}", flush=True)
 
 
 class SetSensitivityView(discord.ui.View):

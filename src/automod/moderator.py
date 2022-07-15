@@ -27,7 +27,7 @@ class UnsubscribeView(discord.ui.View):
         self.config.moderators[f"<@{interaction.user.id}>"] = 1
         self.config_reader.write_config(self.config)
         await interaction.response.send_message("Unsubscribed", ephemeral=True)
-        print(f"[moderator] {interaction.user.name} unsubscribed")
+        print(f"[moderator] {interaction.user.name} unsubscribed", flush=True)
 
 
 
@@ -53,26 +53,26 @@ class ModerationHandler(Handler):
             last_use = self.last_activated[trigger.channel.id] = time.time()
         if time.time() - last_use < self.cooldown:
             # So that it doesn't react twice to the same message
-            print(f"[automod] {trigger.channel.name} is on cooldown")
+            print(f"[automod] {trigger.channel.name} is on cooldown", flush=True)
             return
         chat = Chat()
         for message in release:
             chat.send(message.author.display_name, message.content)
         intervener = Intervener(self.completer, chat=chat, questions=self.questions, prompt_head=self.prompt_head)
         needed = intervener.needed
-        print(f"[moderator] {trigger.chanel.name} {needed}")
+        print(f"[moderator] {trigger.chanel.name} {needed}", flush=True)
         self.results[trigger.channel.id] = Trigger(needed=needed, time=time.time())
         if needed > self.treshold:
             await self.respond(trigger.channel)
             self.last_activated[trigger.channel.id] = time.time()
-            print(f"[moderator] {trigger.chanel.name} triggered")
+            print(f"[moderator] {trigger.chanel.name} triggered", flush=True)
         if self.mod_channel is not None:
             if bot:
                 for moderator, treshold in self.mod_tresholds.items():
                     if needed > treshold:
                         channel = await bot.fetch_channel(self.mod_channel)
                         await channel.send(f"{moderator} needs to intervene on {trigger.channel.mention} ({needed*100:.2f}%)", view=UnsubscribeView(self.config, self.config_reader))
-                        print(f"[moderator] {moderator} pinged for {trigger.channel.name}")
+                        print(f"[moderator] {moderator} pinged for {trigger.channel.name}", flush=True)
 
     async def respond(self, channel):
         await channel.send(embed=self.embed)
