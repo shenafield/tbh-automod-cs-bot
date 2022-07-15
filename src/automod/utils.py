@@ -17,7 +17,13 @@ class SetSensitivityModal(discord.ui.Modal):
         self.add_item(discord.ui.InputText(label="Sensitivity  threshold (0-100)"))
 
     async def callback(self, interaction: discord.Interaction):
-        result = float(self.children[0].value)/100
+        try:
+            result = float(self.children[0].value)/100
+            if result < 0 or result > 1:
+                raise ValueError("Sensitivity threshold must be between 0 and 100")
+        except ValueError:
+            await interaction.response.send_message("Invalid sensitivity threshold", ephemeral=True)
+            return
         original = self.__config.moderators.get(f"<@{interaction.user.id}>")
         self.__config.moderators[f"<@{interaction.user.id}>"] = result
         self.__config_reader.write_config(self.__config)
