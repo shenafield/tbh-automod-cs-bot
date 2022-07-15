@@ -32,10 +32,11 @@ class UnsubscribeView(discord.ui.View):
 
 
 class ModerationHandler(Handler):
-    def __init__(self, completer: Completer, embed: discord.Embed, config, config_reader, treshold=0.5, questions=None, mod_channel=None):
+    def __init__(self, completer: Completer, embed: discord.Embed, config, config_reader, treshold=0.5, questions=None, mod_channel=None, prompt_head=""):
         self.completer = completer
         self.questions = questions
         self.treshold = treshold
+        self.prompt_head = prompt_head
         self.embed = embed
         self.cooldown = 60 * 15
         self.last_activated = {}
@@ -57,7 +58,7 @@ class ModerationHandler(Handler):
         chat = Chat()
         for message in release:
             chat.send(message.author.display_name, message.content)
-        intervener = Intervener(self.completer, chat=chat, questions=self.questions)
+        intervener = Intervener(self.completer, chat=chat, questions=self.questions, prompt_head=self.prompt_head)
         needed = intervener.needed
         print(f"[moderator] {trigger.chanel.name} {needed}")
         self.results[trigger.channel.id] = Trigger(needed=needed, time=time.time())

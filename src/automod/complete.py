@@ -33,6 +33,10 @@ class Completer:
         return self.predict(prompt, **kwargs)["completions"][0]["data"]["text"]
 
     def last_logprob(self, prompt):
-        return self.predict(prompt, maxTokens=0)["prompt"]["tokens"][-1][
+        prediction = {}
+        while "prompt" not in prediction.keys():
+            prediction = self.predict(prompt, maxTokens=0)
+            prompt = prompt[10:]
+        return prediction["prompt"]["tokens"][-1][
             "generatedToken"
         ]["logprob"]

@@ -16,6 +16,12 @@ from .config import JsonConfigReader, Config
 def main():
     load_dotenv(find_dotenv(usecwd=True))
 
+    head_path = os.getenv("PRPOMPT_HEAD")
+    if head_path is None:
+        head = ""
+    else:
+        head = open(head_path).read()
+
     embed = discord.Embed(
         color=0x3B4252,
         title=os.getenv("EMBED_TITLE"),
@@ -26,7 +32,7 @@ def main():
     config_reader = JsonConfigReader(os.getenv("CONFIG_PATH", "config.json"))
     config = config_reader.read_config()
 
-    bot = commands.Bot("!")
+    bot = commands.Bot("!", intents=discord.Intents.all())
     completer = Completer(os.getenv("AI21_TOKEN"), "j1-jumbo")
     handler = ModerationHandler(
         completer,
@@ -36,6 +42,7 @@ def main():
         treshold=float(os.getenv("TRESHOLD", 0.5)),
         questions=os.getenv("EMBED_QUESTION"),
         mod_channel=os.getenv("MOD_CHANNEL"),
+        prompt_head=head,
     )
     bot.add_cog(
         PackagerCog(bot, handler, keywords=tuple(os.getenv("KEYWORDS", "").split(", ")))
